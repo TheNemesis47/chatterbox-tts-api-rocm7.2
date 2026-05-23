@@ -41,9 +41,6 @@ test = [
   "httpx>=0.24.0",
 ]
 
-[tool.uv]
-dev-dependencies = ["requests>=2.28.0"]
-
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = [
@@ -68,3 +65,29 @@ markers = [
   "voice: marks tests as voice-related tests",
   "regression: marks tests as regression tests",
 ]
+[dependency-groups]
+dev = ["requests>=2.28.0"]
+
+[tool.uv]
+index-strategy = "unsafe-best-match"
+# Forza l'installazione delle versioni ROCm tramite il constraint di versione
+override-dependencies = [
+    "torch>=2.6.0",
+    "torchaudio>=2.6.0"
+]
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-rocm", marker = "sys_platform == 'linux'" }
+]
+torchaudio = [
+  { index = "pytorch-rocm", marker = "sys_platform == 'linux'" }
+]
+[[tool.uv.index]]
+name = "pytorch-rocm"
+url = "https://download.pytorch.org/whl/rocm7.2"
+# Niente explicit = true. uv cercherà qui dentro liberamente.
+
+[[tool.uv.index]]
+name = "pytorch-base"
+url = "https://download.pytorch.org/whl/"
+# Niente explicit = true. Contiene triton-rocm e altre librerie condivise.

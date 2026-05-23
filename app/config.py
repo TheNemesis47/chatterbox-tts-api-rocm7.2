@@ -85,6 +85,7 @@ class Config:
 
 
 def detect_device():
+    import torch
     """Detect the best available device"""
     if Config.DEVICE_OVERRIDE.lower() != 'auto':
         return Config.DEVICE_OVERRIDE.lower()
