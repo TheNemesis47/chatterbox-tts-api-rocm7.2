@@ -182,7 +182,7 @@ export const getLanguageFlag = (code: string): string => {
 };
 
 // Default language
-export const DEFAULT_LANGUAGE = 'en';
+export const DEFAULT_LANGUAGE = 'it';
 
 // Language options for dropdowns (sorted by English name)
 export const LANGUAGE_OPTIONS = Object.values(SUPPORTED_LANGUAGES)

@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createTTSService } from '../services/tts';
 import { useApiEndpoint } from './useApiEndpoint';
 import type { VoiceSample, HealthResponse, VoiceLibraryResponse } from '../types';
+import { DEFAULT_LANGUAGE } from '../constants/languages';
 
 // Convert backend voice data to frontend VoiceSample format
 const convertToVoiceSample = (backendVoice: any): VoiceSample => {
@@ -13,7 +14,7 @@ const convertToVoiceSample = (backendVoice: any): VoiceSample => {
     audioUrl: '', // We'll generate this on demand via download endpoint
     uploadDate: new Date(backendVoice.upload_date),
     aliases: backendVoice.aliases || [],
-    language: backendVoice.language || 'en' // Default to English if not specified
+    language: backendVoice.language || DEFAULT_LANGUAGE // Default language if not specified
   };
 };
 
@@ -110,7 +111,7 @@ export function useVoiceLibrary() {
         audioUrl,
         uploadDate: new Date(),
         aliases: [],
-        language: language || 'en'
+        language: language || DEFAULT_LANGUAGE
       };
 
       // Invalidate voices query to refetch the list

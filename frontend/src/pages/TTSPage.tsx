@@ -32,6 +32,7 @@ import { useLongTextTTS } from '../hooks/useLongTextTTS';
 import { useLongTextHistory } from '../hooks/useLongTextHistory';
 import { useHistoryTab } from '../hooks/useHistoryTab';
 import type { TTSRequest, LongTextRequest } from '../types';
+import { DEFAULT_LANGUAGE } from '../constants/languages';
 
 export default function TTSPage() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -284,7 +285,7 @@ export default function TTSPage() {
         exaggeration,
         cfg_weight: cfgWeight,
         temperature,
-        language: 'en',
+        language: selectedVoice?.language || DEFAULT_LANGUAGE,
         output_format: 'mp3',
         session_id: sessionId
       };
