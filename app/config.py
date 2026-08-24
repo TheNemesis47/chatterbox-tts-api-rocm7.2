@@ -22,6 +22,9 @@ class Config:
     CFG_WEIGHT = float(os.getenv('CFG_WEIGHT', 0.5))
     TEMPERATURE = float(os.getenv('TEMPERATURE', 0.8))
     
+    # Model type: 'multilingual', 'standard', or 'turbo'
+    MODEL_TYPE = os.getenv('MODEL_TYPE', 'multilingual').lower()
+    
     # Text processing
     MAX_CHUNK_LENGTH = int(os.getenv('MAX_CHUNK_LENGTH', 280))
     MAX_TOTAL_LENGTH = int(os.getenv('MAX_TOTAL_LENGTH', 3000))
@@ -57,6 +60,8 @@ class Config:
     @classmethod
     def validate(cls):
         """Validate configuration values"""
+        if cls.MODEL_TYPE not in ['multilingual', 'standard', 'turbo']:
+            raise ValueError(f"MODEL_TYPE must be 'multilingual', 'standard', or 'turbo', got {cls.MODEL_TYPE}")
         if not (0.25 <= cls.EXAGGERATION <= 2.0):
             raise ValueError(f"EXAGGERATION must be between 0.25 and 2.0, got {cls.EXAGGERATION}")
         if not (0.0 <= cls.CFG_WEIGHT <= 1.0):

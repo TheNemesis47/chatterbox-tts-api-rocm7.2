@@ -8,6 +8,7 @@ from enum import Enum
 from typing import Optional, Dict, Any
 from chatterbox.tts import ChatterboxTTS
 from chatterbox.mtl_tts import ChatterboxMultilingualTTS
+from chatterbox.tts_turbo import ChatterboxTurboTTS
 from app.core.mtl import SUPPORTED_LANGUAGES
 from app.config import Config, detect_device
 
@@ -79,14 +80,14 @@ async def initialize_model():
             if original_load_file:
                 safetensors.torch.load_file = force_cpu_load_file
         
-        # Determine if we should use multilingual model
-        use_multilingual = Config.USE_MULTILINGUAL_MODEL
+        # Determine model type to use
+        model_type = Config.MODEL_TYPE
         
         _initialization_progress = "Loading TTS model (this may take a while)..."
         # Initialize model with run_in_executor for non-blocking
         loop = asyncio.get_event_loop()
         
-        if use_multilingual:
+        if model_type == "multilingual":
             print(f"Loading Chatterbox Multilingual TTS model...")
             _model = await loop.run_in_executor(
                 None, 
@@ -95,6 +96,15 @@ async def initialize_model():
             _is_multilingual = True
             _supported_languages = SUPPORTED_LANGUAGES.copy()
             print(f"✓ Multilingual model initialized with {len(_supported_languages)} languages")
+        elif model_type == "turbo":
+            print(f"Loading Chatterbox Turbo TTS model...")
+            _model = await loop.run_in_executor(
+                None, 
+                lambda: ChatterboxTurboTTS.from_pretrained(device=_device)
+            )
+            _is_multilingual = False
+            _supported_languages = {"en": "English"}
+            print(f"✓ Turbo model initialized successfully")
         else:
             print(f"Loading standard Chatterbox TTS model...")
             _model = await loop.run_in_executor(
@@ -172,7 +182,7 @@ def supports_language(language_id: str):
 def get_model_info() -> Dict[str, Any]:
     """Get comprehensive model information"""
     return {
-        "model_type": "multilingual" if _is_multilingual else "standard",
+        "model_type": Config.MODEL_TYPE,
         "is_multilingual": _is_multilingual,
         "supported_languages": _supported_languages,
         "language_count": len(_supported_languages),

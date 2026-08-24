@@ -8,6 +8,7 @@ import asyncio
 import tempfile
 import torch
 import torchaudio as ta
+import soundfile as sf
 import base64
 import json
 import struct
@@ -291,7 +292,11 @@ async def generate_speech_internal(
         else:
             final_audio_cpu = final_audio
             
-        ta.save(buffer, final_audio_cpu, model.sr, format="wav")
+        # soundfile expects [time, channels] (or flat 1D)
+        audio_np = final_audio_cpu.numpy()
+        if audio_np.ndim == 2:
+            audio_np = audio_np.T
+        sf.write(buffer, audio_np, model.sr, format="WAV")
         buffer.seek(0)
         
         # Mark as completed
